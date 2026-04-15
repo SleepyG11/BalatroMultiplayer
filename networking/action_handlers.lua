@@ -228,6 +228,10 @@ end
 ---@param seed string
 ---@param stake_str string
 local function action_start_game(seed, stake_str)
+	-- Clear any stale practice/ghost state so it can't leak into real MP
+	MP.SP.practice = false
+	MP.GHOST.clear()
+
 	MP.reset_game_states()
 	local stake = tonumber(stake_str)
 	MP.ACTIONS.set_ante(0)
@@ -236,6 +240,7 @@ local function action_start_game(seed, stake_str)
 	end
 	G.FUNCS.lobby_start_run(nil, { seed = seed, stake = stake })
 	MP.LOBBY.ready_to_start = false
+
 end
 
 local function begin_pvp_blind()
@@ -340,6 +345,7 @@ local function action_end_pvp()
 	MP.GAME.timer = MP.LOBBY.config.timer_base_seconds
 	MP.GAME.timer_started = false
 	MP.GAME.ready_blind = false
+
 end
 
 ---@param lives number
