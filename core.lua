@@ -93,11 +93,16 @@ end
 
 G.C.MULTIPLAYER = HEX("AC3232")
 
-MP.SMODS_VERSION = "1.0.0~BETA-1503a"
+MP.SMODS_VERSION = "1.0.0~BETA-1620a"
 MP.REQUIRED_LOVELY_VERSION = "0.9"
 
 function MP.should_use_the_order()
-	return MP.LOBBY and MP.LOBBY.config and MP.LOBBY.config.the_order and MP.LOBBY.code
+	if MP.LOBBY and MP.LOBBY.config and MP.LOBBY.config.the_order and MP.LOBBY.code then
+		return true
+	elseif MP.is_practice_mode() then -- should actually check the ruleset but okay for now
+		return true
+	end
+	return false
 end
 
 function MP.is_major_league_ruleset()
@@ -171,6 +176,7 @@ function MP.reset_lobby_config(persist_ruleset_and_gamemode)
 		weekly = nil,
 		custom_seed = "random",
 		different_decks = false,
+		random_loadout = false,
 		back = "Red Deck",
 		sleeve = "sleeve_casl_none",
 		stake = 1,
@@ -282,6 +288,7 @@ local networking_dir = MP.EXPERIMENTAL.use_new_networking and "networking" or "n
 MP.load_mp_file(networking_dir .. "/action_handlers.lua")
 
 MP.load_mp_dir("gamemodes")
+MP.load_mp_dir("layers")
 MP.load_mp_dir("rulesets")
 MP.load_mp_dir("ui", true)
 
