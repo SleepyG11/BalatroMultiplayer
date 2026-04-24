@@ -424,17 +424,17 @@ function Game:start_run(args)
                             config = {
                                 ref_table = MP.GAME,
                                 ref_value = "lives",
-                                scale = 2 * scale,
+                                scale = 2 * scale * 0.8,
                                 colour = G.C.IMPORTANT,
                                 shadow = true,
-                                maxw = 0.4,
+                                maxw = 0.5,
                             }
                         },
                         { n = G.UIT.B, config = { w = 0.05, h = 0.05 } },
                         {
                             n = G.UIT.T,
                             config = {
-                                text = "vs",
+                                text = "vs", -- not localized intentionally
                                 scale = scale * 0.8,
                                 colour = G.C.UI.TEXT_DARK,
                                 shadow = true,
@@ -446,7 +446,7 @@ function Game:start_run(args)
                             config = {
                                 ref_table = MP.GAME.enemy,
                                 ref_value = "lives",
-                                scale = 2 * scale,
+                                scale = 2 * scale * 0.8,
                                 colour = G.C.RED,
                                 shadow = true,
                                 maxw = 0.5,
