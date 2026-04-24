@@ -459,14 +459,6 @@ function Game:start_run(args)
         config = {},
     })
 
-	-- hud_ante.children[2].children[1].config.object = DynaText({
-	-- 	string = { { ref_table = both_lives_display, ref_value = "lives" } },
-	-- 	colours = { G.C.IMPORTANT },
-	-- 	shadow = true,
-	-- 	font = G.LANGUAGES["en-us"].font,
-	-- 	scale = 2 * scale,
-	-- })
-
 	-- Remove unnecessary HUD elements from ante counter
 	hud_ante.children[2].children[2] = nil
 	hud_ante.children[2].children[3] = nil
