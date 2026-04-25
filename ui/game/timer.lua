@@ -74,7 +74,7 @@ function MP.UI.timer_hud()
                                                 return string.format("%.1f", MP.GAME.timer)
                                             end,
                                         }), ref_value = "timer" } }, -- sorry
-									colours = { G.C.IMPORTANT },
+									colours = { G.C.UI.TEXT_DARK },
 									shadow = true,
 									scale = 0.8,
 								}),
@@ -148,21 +148,6 @@ function MP.UI.start_pvp_countdown(callback)
 	}))
 end
 
-local gradient_with_offset_update = function(self, dt)
-    if #self.colours < 2 then return end
-    local timer = (G.TIMERS.REAL-(self.mp_gradient_delay or 0))%self.cycle
-    local start_index = math.ceil(timer*#self.colours/self.cycle)
-    local end_index = start_index == #self.colours and 1 or start_index+1
-    local start_colour, end_colour = self.colours[start_index], self.colours[end_index]
-    local partial_timer = (timer%(self.cycle/#self.colours))*#self.colours/self.cycle
-    for i = 1, 4 do
-        if self.interpolation == 'linear' then
-            self[i] = start_colour[i] + partial_timer*(end_colour[i]-start_colour[i])
-        elseif self.interpolation == 'trig' then
-            self[i] = start_colour[i] + 0.5*(1-math.cos(partial_timer*math.pi))*(end_colour[i]-start_colour[i])
-        end
-    end
-end
 
 SMODS.Gradient({
 	key = "timer_accelerated",
@@ -174,7 +159,25 @@ SMODS.Gradient({
 		G.C.IMPORTANT,
 		G.C.IMPORTANT,
 	},
-    update = gradient_with_offset_update
+    update = function(self, dt)
+        if #self.colours < 2 or not MP.LOBBY.config.ruleset then return end
+        local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
+        local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1
+
+        local timer = (-(MP.GAME.timer or 0) / speedup)%self.cycle
+        local start_index = math.ceil(timer*#self.colours/self.cycle)
+        if start_index == 0 then start_index = 1 end
+        local end_index = start_index == #self.colours and 1 or start_index+1
+        local start_colour, end_colour = self.colours[start_index], self.colours[end_index]
+        local partial_timer = (timer%(self.cycle/#self.colours))*#self.colours/self.cycle
+        for i = 1, 4 do
+            if self.interpolation == 'linear' then
+                self[i] = start_colour[i] + partial_timer*(end_colour[i]-start_colour[i])
+            elseif self.interpolation == 'trig' then
+                self[i] = start_colour[i] + 0.5*(1-math.cos(partial_timer*math.pi))*(end_colour[i]-start_colour[i])
+            end
+        end
+    end
 })
 SMODS.Gradient({
 	key = "speedlatro_timer_accelerated",
@@ -186,14 +189,33 @@ SMODS.Gradient({
 		G.C.WHITE,
 		mix_colours(G.C.IMPORTANT, G.C.WHITE, 0.55),
 	},
-    update = gradient_with_offset_update
+    update = function(self, dt)
+        if #self.colours < 2 or not MP.speedlatro_timer then return end
+        local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
+        local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1
+
+        local timer = (-(MP.speedlatro_timer.real or 0) / speedup)%self.cycle
+        local start_index = math.ceil(timer*#self.colours/self.cycle)
+        if start_index == 0 then start_index = 1 end
+        local end_index = start_index == #self.colours and 1 or start_index+1
+        local start_colour, end_colour = self.colours[start_index], self.colours[end_index]
+        local partial_timer = (timer%(self.cycle/#self.colours))*#self.colours/self.cycle
+        for i = 1, 4 do
+            if self.interpolation == 'linear' then
+                self[i] = start_colour[i] + partial_timer*(end_colour[i]-start_colour[i])
+            elseif self.interpolation == 'trig' then
+                self[i] = start_colour[i] + 0.5*(1-math.cos(partial_timer*math.pi))*(end_colour[i]-start_colour[i])
+            end
+        end
+    end
 })
 
 function G.FUNCS.set_timer_box(e)
 	if MP.LOBBY.config.timer then
 		if MP.GAME.timer_started or MP.GAME.nemesis_timer_started then
 			e.config.colour = G.C.DYN_UI.BOSS_DARK
-			e.children[1].config.object.colours = { MP.GAME.timer > 0 and SMODS.Gradients["mp_timer_accelerated"] or G.C.IMPORTANT }
+            -- Pulse if it's pressure timer only
+			e.children[1].config.object.colours = { MP.GAME.timer > 0 and MP.is_layer_active("pressure_timer") and SMODS.Gradients["mp_timer_accelerated"] or G.C.IMPORTANT }
 			return
 		end
 		if not MP.GAME.timer_started and MP.GAME.ready_blind then
@@ -202,7 +224,8 @@ function G.FUNCS.set_timer_box(e)
 			return
 		end
 		e.config.colour = G.C.DYN_UI.BOSS_DARK
-		e.children[1].config.object.colours = { G.C.IMPORTANT }
+        -- Attention text if pressure timer
+		e.children[1].config.object.colours = { MP.is_layer_active("pressure_timer") and G.C.IMPORTANT or G.C.UI.TEXT_DARK }
 	end
 end
 
@@ -239,14 +262,16 @@ function Game:update(dt)
     --     (i.e. they're timering you). Either way your local timer should tick.
     if MP.is_layer_active("pressure_timer") then
         if MP.GAME.ready_blind or MP.is_pvp_boss() then return end
+        -- Tick when "unready" blind and opponent "timering" you
+        if MP.GAME.pvp_reached and not MP.GAME.nemesis_timer_started then return end
+
+        -- Don't tick during animations, unless the user is paused or has a menu open
+        local interactive = not (G.CONTROLLER.locked or (G.GAME.STOP_USE or 0) > 0)
+        local menu_or_paused = G.SETTINGS.paused or G.OVERLAY_MENU
+        if not (interactive or menu_or_paused) then return end
     else
         if not (MP.GAME.timer_started or MP.GAME.nemesis_timer_started) then return end
     end
-
-    -- Don't tick during animations, unless the user is paused or has a menu open
-    local interactive = not (G.CONTROLLER.locked or (G.GAME.STOP_USE or 0) > 0)
-    local menu_or_paused = G.SETTINGS.paused or G.OVERLAY_MENU
-    if not (interactive or menu_or_paused) then return end
 
     local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
     local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1

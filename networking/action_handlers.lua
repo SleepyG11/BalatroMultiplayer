@@ -254,6 +254,7 @@ end
 
 local function action_start_blind()
 	MP.GAME.ready_blind = false
+    MP.GAME.pvp_reached = false
 	MP.GAME.timer_started = false
 	MP.GAME.nemesis_timer_started = false
     MP.GAME.timer_consumed = false
@@ -352,7 +353,7 @@ local function action_end_pvp()
 	MP.GAME.timer_started = false
 	MP.GAME.nemesis_timer_started = false
 	MP.GAME.ready_blind = false
-
+    MP.GAME.pvp_reached = false
 end
 
 ---@param lives number
@@ -856,10 +857,6 @@ local function action_start_ante_timer(time, from_nemesis)
 	end
     if from_nemesis then
         MP.GAME.nemesis_timer_started = true
-        SMODS.Gradients.mp_timer_accelerated.mp_gradient_delay = MP.GAME.timer % 1
-        if MP.speedlatro_timer then
-            SMODS.Gradients.mp_speedlatro_timer_accelerated.mp_gradient_delay = MP.speedlatro_timer.real % 1
-        end
     else
         MP.GAME.timer_started = true
     end

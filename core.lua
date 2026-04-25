@@ -230,6 +230,7 @@ function MP.reset_game_states()
 		timer = MP.UTILS.timer_base(),
 		timer_started = false,
         timer_consumed = false,
+        pvp_reached = false,
 		pvp_countdown = 0,
 		real_money = 0,
 		ce_cache = false,
