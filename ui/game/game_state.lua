@@ -236,8 +236,6 @@ function Game:update_hand_played(dt)
 							offset = { x = 0, y = -1.5 },
 							major = G.play,
 						})
-						MP.GAME.maintain_pvp_end_stop_use = true
-						stop_use()
 					end
 					if G.hand.cards[1] and G.STATE == G.STATES.HAND_PLAYED then
 						eval_hand_and_jokers()
@@ -259,16 +257,10 @@ function Game:update_hand_played(dt)
 		}))
 	end
 
-	if not MP.GAME.end_pvp and MP.GAME.maintain_pvp_end_stop_use and not (G.GAME.STOP_USE and G.GAME.STOP_USE > 0) then
-		stop_use()
-	end
-
 	if MP.GAME.end_pvp and MP.is_pvp_boss() and not (G.GAME.STOP_USE and G.GAME.STOP_USE > 0) then
-		stop_use()
 		G.STATE_COMPLETE = false
 		G.STATE = G.STATES.NEW_ROUND
 		MP.GAME.end_pvp = false
-		MP.GAME.maintain_pvp_end_stop_use = nil
 	end
 end
 
@@ -338,14 +330,12 @@ function Game:update_selecting_hand(dt)
 		if not MP.is_pvp_boss() then
 			G.STATE_COMPLETE = false
 			G.STATE = G.STATES.NEW_ROUND
-			stop_use()
 		else
 			if not MP.GHOST.is_active() then
 				MP.ACTIONS.play_hand(G.GAME.chips, 0)
 			end
 			G.STATE_COMPLETE = false
 			G.STATE = G.STATES.HAND_PLAYED
-			stop_use()
 		end
 		return
 	end
@@ -406,13 +396,58 @@ function Game:start_run(args)
 	hud_ante.children[1].children[1].config.text = localize("k_lives")
 
 	-- Set lives number
-	hud_ante.children[2].children[1].config.object = DynaText({
-		string = { { ref_table = MP.GAME, ref_value = "lives" } },
-		colours = { G.C.IMPORTANT },
-		shadow = true,
-		font = G.LANGUAGES["en-us"].font,
-		scale = 2 * scale,
-	})
+    local lives_container = hud_ante.children[2].children[1]
+    if  lives_container.config.object then
+        lives_container.config.object:remove()
+    end
+    lives_container.config.object = UIBox({
+        definition = {
+            n = G.UIT.ROOT,
+            config = { colour = G.C.CLEAR },
+            nodes = {
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm", minw = 1.2, maxw = 1.2, minh = 0.664 },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                ref_table = MP.GAME,
+                                ref_value = "lives",
+                                scale = 2 * scale * 0.8,
+                                colour = G.C.IMPORTANT,
+                                shadow = true,
+                                maxw = 0.5,
+                            }
+                        },
+                        { n = G.UIT.B, config = { w = 0.05, h = 0.05 } },
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = "vs", -- not localized intentionally
+                                scale = scale * 0.8,
+                                colour = G.C.UI.TEXT_DARK,
+                                shadow = true,
+                            }
+                        },
+                        { n = G.UIT.B, config = { w = 0.05, h = 0.05 } },
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                ref_table = MP.GAME.enemy,
+                                ref_value = "lives",
+                                scale = 2 * scale * 0.8,
+                                colour = G.C.RED,
+                                shadow = true,
+                                maxw = 0.5,
+                            }
+                        },
+                    }
+                }
+            }
+        },
+        config = {},
+    })
 
 	-- Remove unnecessary HUD elements from ante counter
 	hud_ante.children[2].children[2] = nil
