@@ -164,7 +164,10 @@ SMODS.Gradient({
         local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
         local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1
 
-        local timer = (-(MP.GAME.timer or 0) / speedup)%self.cycle
+        -- When you "timering" opponent, timer stops and you cannot see is button pressed
+        -- So we need switch to real timer to make it flush
+        local time_value = MP.GAME.timer_started and G.TIMERS.REAL or -(MP.GAME.timer or 0)
+        local timer = (time_value / speedup)%self.cycle
         local start_index = math.ceil(timer*#self.colours/self.cycle)
         if start_index == 0 then start_index = 1 end
         local end_index = start_index == #self.colours and 1 or start_index+1
