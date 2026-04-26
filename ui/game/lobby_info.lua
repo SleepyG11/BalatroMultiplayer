@@ -246,13 +246,14 @@ function MP.UI.create_UIBox_player_row(type)
 							{
 								n = G.UIT.T,
 								config = {
-									text = tostring(skips) .. " " .. localize("b_skip"),
+									text = tostring(skips) .. " " .. localize("k_skips"),
 									scale = 0.4,
 									colour = G.C.UI.TEXT_LIGHT,
 								},
 							},
 						},
 					},
+                    -- Let's keep it for future, just in case
 					-- {
 					-- 	n = G.UIT.C,
 					-- 	config = { align = "cr", padding = 0.01, r = 0.1, colour = G.C.CHIPS, minw = 1.1 },
