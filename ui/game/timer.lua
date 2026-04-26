@@ -252,6 +252,7 @@ function Game:update(dt)
     MP.TIMER_CLOCK = new_time
 
     -- Bail fast: not an MP PvP-timer context
+    if G.STATE == G.STATES.GAME_OVER then return end
     if not MP.LOBBY.code then return end
     if not MP.LOBBY.config.timer then return end
     if MP.GAME.timer_consumed then return end
