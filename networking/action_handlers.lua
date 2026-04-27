@@ -330,6 +330,10 @@ local function action_enemy_info(score_str, hands_left_str, skips_str, lives_str
 		play_sound("holo1", 0.865, 0.9)
 		play_sound("gong", 0.765, 0.4)
 	end
+    if MP.GAME.enemy.skips < skips then
+        play_sound('negative', 0.865, 0.4)
+        play_sound("gong", 0.765, 0.4)
+    end
 
 	MP.GAME.enemy.hands = hands_left
 	MP.GAME.enemy.skips = skips
@@ -360,10 +364,8 @@ end
 local function action_player_info(lives)
 	if MP.GAME.lives ~= lives then
 		if MP.GAME.lives ~= 0 and MP.LOBBY.config.gold_on_life_loss then
-			if MP.is_pvp_boss() or MP.is_major_league_ruleset() then
-				MP.GAME.comeback_bonus_given = false
-				MP.GAME.comeback_bonus = MP.GAME.comeback_bonus + 1
-			end
+			MP.GAME.comeback_bonus_given = false
+			MP.GAME.comeback_bonus = MP.GAME.comeback_bonus + 1
 		end
 		MP.UI.ease_lives(lives - MP.GAME.lives, true)
 		if MP.LOBBY.config.no_gold_on_round_loss and (G.GAME.blind and G.GAME.blind.dollars) then
