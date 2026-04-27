@@ -162,7 +162,7 @@ SMODS.Gradient({
     update = function(self, dt)
         if #self.colours < 2 or not MP.LOBBY.config.ruleset then return end
         local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
-        local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1
+        local speedup = MP.GAME.timer_started and 1 or (ruleset and ruleset.timer_speedup_multiplier) or 1
 
         -- When you "timering" opponent, timer stops and you cannot see is button pressed
         -- So we need switch to real timer to make it flush
@@ -197,7 +197,7 @@ SMODS.Gradient({
         local ruleset = MP.Rulesets[MP.LOBBY.config.ruleset]
         local speedup = (ruleset and ruleset.timer_speedup_multiplier) or 1
 
-        local timer = (-(MP.speedlatro_timer.real or 0) / speedup)%self.cycle
+        local timer = MP.GAME.ready_blind and 0 or (-(MP.speedlatro_timer.real or 0) / speedup)%self.cycle
         local start_index = math.ceil(timer*#self.colours/self.cycle)
         if start_index == 0 then start_index = 1 end
         local end_index = start_index == #self.colours and 1 or start_index+1
@@ -218,7 +218,10 @@ function G.FUNCS.set_timer_box(e)
 		if MP.GAME.timer_started or MP.GAME.nemesis_timer_started then
 			e.config.colour = G.C.DYN_UI.BOSS_DARK
             -- Pulse if it's pressure timer only
-			e.children[1].config.object.colours = { MP.GAME.timer > 0 and MP.is_layer_active("pressure_timer") and SMODS.Gradients["mp_timer_accelerated"] or G.C.IMPORTANT }
+			e.children[1].config.object.colours = { 
+                MP.GAME.timer > 0 and (MP.is_layer_active("pressure_timer") or MP.is_layer_active("no_animation_timer") or MP.is_layer_active("speedlatro"))
+                and SMODS.Gradients["mp_timer_accelerated"] or G.C.IMPORTANT
+            }
 			return
 		end
 		if not MP.GAME.timer_started and MP.GAME.ready_blind then
