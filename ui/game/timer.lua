@@ -228,7 +228,7 @@ function G.FUNCS.set_timer_box(e)
 		end
 		e.config.colour = G.C.DYN_UI.BOSS_DARK
         -- Attention text if pressure timer
-		e.children[1].config.object.colours = { MP.is_layer_active("pressure_timer") and G.C.IMPORTANT or G.C.UI.TEXT_DARK }
+		e.children[1].config.object.colours = { MP.is_layer_active("pressure_timer") and not MP.is_pvp_boss() and G.C.IMPORTANT or G.C.UI.TEXT_DARK }
 	end
 end
 
