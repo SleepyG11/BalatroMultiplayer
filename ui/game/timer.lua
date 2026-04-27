@@ -255,15 +255,17 @@ function Game:update(dt)
     if not MP.GAME.timer or MP.GAME.timer <= 0 then return end
     if MP.is_layer_active("speedlatro_timer") then return end
 
+
+    local is_no_animation_timer = MP.is_layer_active("no_animation_timer")
     -- Tick gating differs by layer:
     --   pressure_timer ON  -> tick during regular play (not ready_blind, not pvp boss)
     --   pressure_timer OFF -> tick whenever someone pressed a timer button.
     --     timer_started = YOU pressed it; nemesis_timer_started = OPPONENT pressed it
     --     (i.e. they're timering you). Either way your local timer should tick.
-    if MP.is_layer_active("pressure_timer") then
+    if MP.is_layer_active("pressure_timer") or is_no_animation_timer then
         if MP.GAME.ready_blind or MP.is_pvp_boss() then return end
-        -- Tick when "unready" blind and opponent "timering" you
-        if MP.GAME.pvp_reached and not MP.GAME.nemesis_timer_started then return end
+        -- Tick when "unready" blind or old timer, and opponent "timering" you
+        if (MP.GAME.pvp_reached or is_no_animation_timer) and not MP.GAME.nemesis_timer_started then return end
 
         -- Don't tick during animations, unless the user is paused or has a menu open
         local interactive = not (G.CONTROLLER.locked or (G.GAME.STOP_USE or 0) > 0)
