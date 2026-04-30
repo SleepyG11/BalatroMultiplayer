@@ -77,10 +77,9 @@ local rulesets_tabs = {
             name = "k_mp_ruleset_tab_experimental",
             data = {
                 {
-                    name = "k_tournament",
+                    name = "k_experimental",
                     buttons = {
-                        { button_id = "badlatro_ruleset_button", button_localize_key = "k_badlatro" },
-                        { button_id = "chaos_ruleset_button", button_localize_key = "k_chaos" },
+                        { button_id = "experimental_ruleset_button", button_localize_key = "k_experimental" },
                     },
                 },
             }

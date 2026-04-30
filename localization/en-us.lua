@@ -950,6 +950,15 @@ return {
 					"not just discovered ones",
 				},
 			},
+			mp_sticker_balanced_j_mp_bloodstone = {
+				name = "Balanced",
+				text = {
+					"In {C:attention}PvP{}, the {C:green}1 in 2{} rolls",
+					"come from a {C:attention}fixed sequence{}",
+					"shared between both players and",
+					"{C:attention}reused{} every hand of the round",
+				},
+			},
 			mp_sticker_balanced_c_mp_ouija_standard = {
 				name = "Balanced",
 				text = {
@@ -1244,7 +1253,7 @@ return {
 			k_wait_enemy = "Waiting for enemy to finish...",
 			k_wait_enemy_reach_this_blind = "Waiting for enemy to reach this blind...",
 			k_lives = "Lives",
-            k_skips = "Skips",
+			k_skips = "Skips",
 			k_lost_life = "Lost a life",
 			k_total_lives_lost = " Total Lives Lost",
 			k_comeback_money_sandbox = " Comeback Money ($3 × ante cleared)",
@@ -1303,6 +1312,8 @@ return {
 			k_vanilla_description = "The original Balatro experience.\n\nNo Multiplayer jokers, no balance changes.\nJust the base game as it was designed.\n\nMultiplayer features like the timer are still available\nbut can be disabled in Lobby Options.",
 			k_blitz = "Standard",
 			k_blitz_description = "The balanced Multiplayer ruleset.\n\nIncludes Multiplayer jokers and balance changes\nwith full control over your lobby settings.\n\n(See bans and reworks tabs for details)",
+			k_experimental = "Experimental",
+			k_experimental_description = "Standard's bleeding edge.\n\nHeavier balance changes being trialed\nfor a future Standard ruleset.\nExpect things to shift between versions.\n\n(See bans and reworks tabs for details)",
 			k_traditional = "Traditional",
 			k_traditional_description = "Multiplayer content without time pressure.\n\nIncludes Multiplayer jokers and balance changes,\nbut removes time-based mechanics for methodical play.\n\nTime-based jokers are banned.\nTimer is disabled.\n\n(See bans and reworks tabs for details)",
 			k_majorleague = "Major League",
@@ -1477,9 +1488,15 @@ return {
 			ch_c_mp_indigo = {
 				"Played on {C:attention}Indigo Deck{}",
 			},
-			ch_c_mp_shop_planets = { "{C:planet}Planet{} cards appear" },
-			ch_c_mp_shop_planets_EXTENDED = { "{C:attention}40X{} more frequently in the shop" },
-			ch_c_mp_planet_tycoon_CREDITS = { "{C:inactive}(Idea by {C:attention}BlockAttack{C:inactive})" },
+			ch_c_mp_shop_planets = {
+				"{C:planet}Planet{} cards appear",
+			},
+			ch_c_mp_shop_planets_EXTENDED = {
+				"{C:attention}40X{} more frequently in the shop",
+			},
+			ch_c_mp_planet_tycoon_CREDITS = {
+				"{C:inactive}(Idea by {C:attention}BlockAttack{C:inactive})",
+			},
 			ch_c_mp_eeeee = {
 				"Some randomly selected RNG queues are {C:attention}bugged{} each Ante",
 			},
