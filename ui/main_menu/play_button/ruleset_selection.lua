@@ -79,7 +79,10 @@ local rulesets_tabs = {
                 {
                     name = "k_experimental",
                     buttons = {
-                        { button_id = "experimental_ruleset_button", button_localize_key = "k_experimental" },
+                        { button_id = "experimental_pressure_ruleset_button", button_localize_key = "k_experimental_pressure" },
+                        { button_id = "experimental_no_animation_ruleset_button", button_localize_key = "k_experimental_no_animation" },
+                        { button_id = "experimental_pressure_only_ruleset_button", button_localize_key = "k_experimental_pressure_only" },
+                        { button_id = "experimental_no_animation_only_ruleset_button", button_localize_key = "k_experimental_no_animation_only" },
                     },
                 },
             }
@@ -126,8 +129,9 @@ function G.UIDEF.ruleset_selection_options(mode, buttons)
 	if mode == "practice" and MP.GHOST.is_active() and MP.SP.ruleset then
 		default_ruleset = MP.SP.ruleset
 	else
-        default_ruleset = string.match(buttons[1].buttons[1].button_id, "(.+)_%w+_button")
+        default_ruleset = string.match(buttons[1].buttons[1].button_id, "(.+)_ruleset_button$")
 	end
+    print(default_ruleset)
 
 	if mode == "sp" or mode == "practice" then
 		MP.SP.ruleset = "ruleset_mp_" .. default_ruleset
@@ -136,13 +140,14 @@ function G.UIDEF.ruleset_selection_options(mode, buttons)
 	end
 
 	MP.LoadReworks(default_ruleset)
+    MP.UI.ruleset_selection_mode = mode
 
 	local default_ruleset_area = UIBox({
 		definition = G.UIDEF.ruleset_info(default_ruleset, mode),
 		config = { align = "cm" },
 	})
 
-	MP.UI.ruleset_selection_mode = mode
+
 
 	return MP.UI.Main_Lobby_Options(
 		"ruleset_area",
